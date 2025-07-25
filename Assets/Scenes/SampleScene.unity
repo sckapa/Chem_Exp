@@ -133,7 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 425061915}
   m_Layer: 0
-  m_Name: MoveHere
+  m_Name: TestTubePourPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -393,9 +393,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   testTube: {fileID: 979689425027423579}
+  testTubeLiquid: {fileID: 5736969257153833266}
+  flask1: {fileID: 4372964828260566955}
+  flask2: {fileID: 5736969256738562994}
+  flaskLiquid1: {fileID: 5736969256400130546}
+  flaskLiquid2: {fileID: 5736969256481654299}
   pourPosition: {fileID: 425061915}
-  pourDuration: 1
-  testTubeShader: {fileID: 5736969257153833266}
+  flaskPosition: {fileID: 1703322660}
+  targetColor: {r: 0.8, g: 0.6, b: 1, a: 1}
+  duration: 3
+  animator: {fileID: 5736969257076579721}
 --- !u!4 &1058734611
 Transform:
   m_ObjectHideFlags: 0
@@ -406,6 +413,37 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.3208754, z: 0.28999996}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1703322659
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1703322660}
+  m_Layer: 0
+  m_Name: FlaskMovePosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1703322660
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1703322659}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.122, y: 0.561, z: 0.323}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4022,13 +4060,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
-  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
-    are already bound by a Humanoid avatar. These transforms can only be changed
-    by Humanoid clips.\n\tTransform 'mixamorig:LeftHand'\n\tTransform 'mixamorig:RightForeArm'\n\tTransform
-    'mixamorig:LeftArm'\n\tTransform 'mixamorig:Hips'\n\tTransform 'mixamorig:RightHand'\n\tTransform
-    'mixamorig:LeftForeArm'\n\tTransform 'mixamorig:LeftShoulder'\n\tTransform 'mixamorig:RightFoot'\n\tTransform
-    'mixamorig:LeftLeg'\n\tTransform 'mixamorig:LeftHand'\n\tand more ...\n\tFrom
-    animation clip 'ExcitedAnim'\n\tFrom animation clip 'IrritatedAnim'"
+  m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
@@ -5938,3 +5970,4 @@ SceneRoots:
   - {fileID: 5049628212623000113}
   - {fileID: 1058734611}
   - {fileID: 425061915}
+  - {fileID: 1703322660}

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -23,8 +24,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private Transform flaskPosition;
 
-    [SerializeField] 
-    private Color targetColor = new Color(0.8f, 0.6f, 1.0f); 
+    [SerializeField]
+    private Color targetColor;
     [SerializeField]
     private float duration = 3f;
 
@@ -36,11 +37,10 @@ public class GameManager : MonoBehaviour
 
     private Vector3 FlaskInitPos;
 
-    private void Start()
-    {
-        StartCoroutine(MoveTestTubeToPourPosition());
-        StartCoroutine(MoveFlaskToPourPosition(2));
-    }
+    private bool flask1Filled = false;
+    private bool flask2Filled = false;
+    private bool filling = false;
+    private bool testTubeMoved = false;
 
     private void OnApplicationQuit()
     {
@@ -51,6 +51,42 @@ public class GameManager : MonoBehaviour
 
         flaskLiquid2.GetComponent<Renderer>().sharedMaterial.SetFloat("_FillAmount", 0.5f);
         flaskLiquid2.GetComponent<Renderer>().sharedMaterial.SetColor("_Tint", new Color(0.75f, 0.75f, 0.75f, 1f));
+    }
+
+    private void Update()
+    {
+        if(filling)
+        {
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.gameObject == testTube && (!flask1Filled || !flask2Filled))
+                {
+                    testTubeMoved = true;
+                    StartCoroutine(MoveTestTubeToPourPosition());
+                }
+                else if (testTubeMoved)
+                {
+                    if (hit.collider.gameObject == flask1 && !flask1Filled)
+                    {
+                        flask1Filled = true;
+                        StartCoroutine(MoveFlaskToPourPosition(1));
+                    }
+                    else if (hit.collider.gameObject == flask2 && !flask2Filled)
+                    {
+                        flask2Filled = true;
+                        StartCoroutine(MoveFlaskToPourPosition(2));
+                    }
+                }
+            }
+        }
     }
 
     private IEnumerator MoveTestTubeToPourPosition()
@@ -66,14 +102,11 @@ public class GameManager : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
-
-        yield return new WaitForSecondsRealtime(0.5f);
-
-        StartCoroutine(Pour());
     }
 
     private IEnumerator MoveFlaskToPourPosition(int flaskNumber)
     {
+        filling = true;
         GameObject flask = null;
         if (flaskNumber == 1)
         {
@@ -98,6 +131,7 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
+        StartCoroutine(Pour());
         StartCoroutine(FillFlask(flaskNumber));
     }
 
@@ -112,6 +146,8 @@ public class GameManager : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
+
+        testTubeMoved = false;
     }
 
     private IEnumerator MoveFlaskToInitPosition(int flaskNumber)
@@ -138,17 +174,20 @@ public class GameManager : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
+
+        filling = false;
     }
 
     private IEnumerator Pour()
     {
         float lerpTimer = 0;
-        float lerpDuration = 3; 
+        float lerpDuration = 3;
+        float fill = testTubeLiquid.GetComponent<Renderer>().sharedMaterial.GetFloat("_FillAmount");
 
         while (lerpTimer < lerpDuration)
         {
             float t = lerpTimer / lerpDuration;
-            float currentValue = Mathf.Lerp(0.4f, 0.5f, t);
+            float currentValue = Mathf.Lerp(fill, fill + 0.1f, t);
             testTubeLiquid.GetComponent<Renderer>().sharedMaterial.SetFloat("_FillAmount", currentValue);
             lerpTimer += Time.deltaTime;
             yield return null;
@@ -191,10 +230,12 @@ public class GameManager : MonoBehaviour
         GameObject flaskLiquid = null;
         if (flaskNumber == 1)
         {
+            targetColor = new Color(0.8f, 0.6f, 1.0f);
             flaskLiquid = flaskLiquid1;
         }
         else if (flaskNumber == 2)
         {
+            targetColor = new Color(0.2f, 0.8f, 0.3f);
             flaskLiquid = flaskLiquid2;
         }
         else
@@ -213,14 +254,24 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        SetAnimTrigger();
-        StartCoroutine(MoveFlaskToInitPosition(2));
+        StartCoroutine(SetAnimTrigger(flaskNumber));
+        StartCoroutine(MoveFlaskToInitPosition(flaskNumber));
         StartCoroutine(MoveTestTubeToInitPosition());
     }
 
-    private void SetAnimTrigger()
+    private IEnumerator SetAnimTrigger(int flaskNumber)
     {
-        animator.SetTrigger("Excited");
-    }
+        if (flaskNumber == 1)
+        {
+            animator.SetTrigger("Excited");
 
+        }
+        else if(flaskNumber == 2)
+        {
+            animator.SetTrigger("Disgusted");
+        }
+        yield return new WaitForSeconds(3);
+
+        animator.SetTrigger("Idle");
+    }
 }
